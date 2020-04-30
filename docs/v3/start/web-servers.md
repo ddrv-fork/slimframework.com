@@ -5,7 +5,7 @@ title: Web Servers
 It is typical to use the front-controller pattern to funnel appropriate HTTP
 requests received by your web server to a single PHP file. The instructions
 below explain how to tell your web server to send HTTP requests to your PHP
-front-controller file.
+front-controller file if no matching static files or directories exist.
 
 ## PHP built-in server
 
@@ -62,7 +62,7 @@ server {
         try_files $uri =404;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param SCRIPT_NAME $fastcgi_script_name;
         fastcgi_index index.php;
         fastcgi_pass 127.0.0.1:9000;

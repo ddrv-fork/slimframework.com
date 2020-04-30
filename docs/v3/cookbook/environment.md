@@ -2,7 +2,7 @@
 title: Getting and Mocking the Environment
 ---
 
-The Environment object encapsulates the `$_SERVER` superglobal array and decouples the Slim application from the PHP global environment. Decoupling the Slim application from the PHP global environment lets us create HTTP requests that may (or may not) resemble the global environment. This is particuarly useful for unit testing and initiating sub-requests. You can fetch the current Environment object anywhere in your Slim application like this:
+The Environment object encapsulates the `$_SERVER` superglobal array and decouples the Slim application from the PHP global environment. Decoupling the Slim application from the PHP global environment lets us create HTTP requests that may (or may not) resemble the global environment. This is particularly useful for unit testing and initiating sub-requests. You can fetch the current Environment object anywhere in your Slim application like this:
 
 ```php
 $container = $app->getContainer();
@@ -59,17 +59,24 @@ PHP_AUTH_DIGEST
 AUTH_TYPE
 :   The HTTP `Authentication` header's authentication type (e.g., "Basic" or "Digest").
 
+slim.files
+:   array of implements `\Psr\Http\Message\UploadedFileInterface` 
+    (for example, native Slim Framework `\Slim\Http\UploadedFile`)
+
 ## Mock Environments
 
 Each Slim application instantiates an Environment object using information from the current global environment. However, you may also create mock environment objects with custom information. Mock Environment objects are only useful when writing unit tests.
 
 ```php
 $env = \Slim\Http\Environment::mock([
-    'REQUEST_METHOD' => 'PUT',
+    'REQUEST_METHOD' => 'POST',
     'REQUEST_URI' => '/foo/bar',
     'QUERY_STRING' => 'abc=123&foo=bar',
     'SERVER_NAME' => 'example.com',
-    'CONTENT_TYPE' => 'application/json;charset=utf8',
-    'CONTENT_LENGTH' => 15
+    'CONTENT_TYPE' => 'multipart/form-data',
+    'slim.files' => [
+        'field1' => new UploadedFile('/path/to/file1', 'filename1.txt', 'text/plain', filesize('/path/to/file1')),
+        'field2' => new UploadedFile('/path/to/file2', 'filename2.txt', 'text/plain', filesize('/path/to/file2')),
+    ],
 ]);
 ```

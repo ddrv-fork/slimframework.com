@@ -10,7 +10,7 @@ The first step is importing the library into the `vendor` directory of your proj
 
 <figure markdown="1">
 ```bash
-composer require doctrine/orm:^2
+composer require doctrine/orm
 ```
 <figcaption>Figure 1: Require doctrine in your application.</figcaption>
 </figure>
@@ -121,6 +121,7 @@ already present at `vendor/bin`. But in order to work, this script needs a [`cli
 file at the root of the project telling it how to find the `EntityManager` we just set up:
 
 <figure markdown="1">
+
 ```php
 <?php
 
@@ -133,10 +134,9 @@ use Slim\Container;
 /** @var Container $container */
 $container = require_once __DIR__ . '/bootstrap.php';
 
-ConsoleRunner::run(
-    ConsoleRunner::createHelperSet($container[EntityManager::class])
-);
+return ConsoleRunner::createHelperSet($container[EntityManager::class]);
 ```
+
 <figcaption>Figure 4: Enabling Doctrine's console app.</figcaption>
 </figure>
 

@@ -23,14 +23,14 @@ Start by making a folder for your project (mine is called `project`, because nam
 
 [Composer](https://getcomposer.org) is the best way to install Slim Framework.  If you don't have it already, you can follow the [installation instructions](https://getcomposer.org/download/), in my project I've just downloaded the `composer.phar` into my `src/` directory and I'll use it locally.  So my first command looks like this (I'm in the `src/` directory):
 
-    php composer.phar require slim/slim
+    php composer.phar require slim/slim:3.*
 
 This does two things:
 
 * Add the Slim Framework dependency to `composer.json` (in my case it creates the file for me as I don't already have one, it's safe to run this if you do already have a `composer.json` file)
 * Run `composer install` so that those dependencies are actually available to use in your application
 
-If you look inside the project directory now, you'll see that you have a `vendor/` folder with all the library code in it.  There are also two new files: `composer.json` and `composer.lock`.  This would be a great time to get our source control setup correct as well: when working with composer, we always exclude the `vendor/` directory, but both `composer.json` and `composer.lock` should be included under source control.  Since I'm using `composer.phar` in this directory I'm going to include it in my repo as well; you could equally install the `composer` command on all the systems that need it.
+If you look inside the src directory now, you'll see that you have a `vendor/` folder with all the library code in it.  There are also two new files: `composer.json` and `composer.lock`.  This would be a great time to get our source control setup correct as well: when working with composer, we always exclude the `vendor/` directory, but both `composer.json` and `composer.lock` should be included under source control.  Since I'm using `composer.phar` in this directory I'm going to include it in my repo as well; you could equally install the `composer` command on all the systems that need it.
 
 To set up the git ignore correctly, create a file called `src/.gitignore` and add the following single line to the file:
 
@@ -121,7 +121,7 @@ if (!-e $request_filename){
 }
 ```
 
-*NOTE:* If you want your entry point to be something other than index.php you will need your config to change as well. `api.php` is also commonly used as an entry point, so your set up should match accordingly. This example assumes your are using index.php.
+*NOTE:* If you want your entry point to be something other than index.php you will need your config to change as well. `api.php` is also commonly used as an entry point, so your set up should match accordingly. This example assumes you are using index.php.
 
 With this setup, just remember to use http://slimproject.test instead of http://localhost:8080 in the other examples in this tutorial.  The same health warning as above applies: you'll see an error page at http://slimproject.test but crucially it's *Slim's* error page.  If you go to http://slimproject.test/hello/joebloggs then something better should happen.
 
@@ -144,6 +144,7 @@ $config['db']['user']   = 'user';
 $config['db']['pass']   = 'password';
 $config['db']['dbname'] = 'exampleapp';
 ```
+These string should be added into `src/public/index.php` before the `$app = new \Slim\App` line.
 
 The first line is the most important!  Turn this on in development mode to get information about errors (without it, Slim will at least log errors so if you're using the built in PHP webserver then you'll see them in the console output which is helpful). The second line allows the web server to set the Content-Length header which makes Slim behave more predictably.
 
@@ -161,7 +162,7 @@ We'll be able to access any settings we put into that `$config` array from our a
 
 Composer can handle the autoloading of your own classes just as well as the vendored ones. For an in-depth guide, take a look at [using Composer to manage autoloading rules](https://getcomposer.org/doc/04-schema.md#autoload).
 
-My setup is pretty simple since I only have a few extra classes, they're just in the global namespace, and the files are in the `src/classes/` directory.  So to autoload them, I add this `autoload` section to my `composer.json` file:
+My setup is pretty simple. I have a few extra classes and the files are in the `src/classes/` directory.  So to autoload them, I add this `autoload` section to my `composer.json` file:
 
 ```javascript
 {
@@ -173,7 +174,7 @@ My setup is pretty simple since I only have a few extra classes, they're just in
     },
     "autoload": {
         "psr-4": {
-            "": "classes/"
+            "Example\\": "classes/"
         }
     }
 }
@@ -408,7 +409,7 @@ To use this in my template, I need to make the router available in the template 
     $response = $this->view->render($response, 'tickets.phtml', ['tickets' => $tickets, 'router' => $this->router]);
 ```
 
-With the `/tickets/{id}` route having a friendly name, and the router now available in our template, this is what makes the `pathFor()` call in our template work.  By supplying the `id`, this gets used as a named placeholder in the URL pattern, and the correct URL for linking to that route with those values is created.  This feature is brilliant for readable template URLs and is even better if you ever need to change a URL format for any reason - no need to grep templates to see where it's used.  This approach is definitely recomended, especially for links you'll use a lot.
+With the `/tickets/{id}` route having a friendly name, and the router now available in our template, this is what makes the `pathFor()` call in our template work.  By supplying the `id`, this gets used as a named placeholder in the URL pattern, and the correct URL for linking to that route with those values is created.  This feature is brilliant for readable template URLs and is even better if you ever need to change a URL format for any reason - no need to grep templates to see where it's used.  This approach is definitely recommended, especially for links you'll use a lot.
 
 ## Where Next?
 
